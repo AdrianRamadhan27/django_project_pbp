@@ -12,22 +12,27 @@
 
     <form method="POST" action="">
         {% csrf_token %}
-        <table>
-            <tr>
-                <td>Username: </td>
-                <td><input type="text" name="username" placeholder="Username" class="form-control"></td>
-            </tr>
-                    
-            <tr>
-                <td>Password: </td>
-                <td><input type="password" name="password" placeholder="Password" class="form-control"></td>
-            </tr>
+        <div class="container text-center">
+            
+            <div class="row">
+                <div class="col">Username: </div>
+                <div class="col"><input type="text" name="username" placeholder="Username" class="form-control"></div>
+            </div>
 
-            <tr>
-                <td></td>
-                <td><input class="btn login_btn" type="submit" value="Login"></td>
-            </tr>
-        </table>
+            <div class="row">
+                <div class="col">Password: </div>
+                <div class="col"><input type="password" name="password" placeholder="Password" class="form-control"></div>
+            </div>
+
+            <div class="row">
+            
+                <div class="col"><button><input class="btn login_btn" type="submit" value="Login"></button></div>
+            </div>
+                
+            
+                    
+            
+        </div>
     </form>
 
     {% if messages %}
