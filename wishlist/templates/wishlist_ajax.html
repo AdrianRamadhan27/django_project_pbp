@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+  $(document).ready(function(){
+    $("button").click(function(){
+      $.getJSON("{% url 'wishlist:show_json' %}", function(data) {
+          var tables = [];
+          $.each(data, function(index, val){
+              var row = [];
+              var nama_barang = String(val.fields.nama_barang);
+              var harga_barang = val.fields.harga_barang;
+              var deskripsi = val.fields.deskripsi;
+              row.push("<td>" + nama_barang + "</td>");
+              row.push("<td>" + harga_barang + "</td>");
+              row.push("<td>" + deskripsi + "</td>");
+              tables.push("<tr>" + row.join("") + "</tr>");
+          });
+          document.getElementById("wishlist").innerHTML = tables.join("");
+      }); 
+    });
+  });
+</script>
+
+<nav class="navbar navbar-expand-lg bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Wishlist {{nama}}</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://pbp-fasilkom-ui.github.io/ganjil-2023/assignments/tutorial/tutorial-4#pengenalan-bootstrap">Website PBP</a>
+          </li>
+          
+        </ul>
+        <button class="btn btn-outline-danger"><a href="{% url 'wishlist:logout' %}">Logout</a></button>
+      </div>
+    </div>
+  </nav>
+
+<h5>Nama: </h5>
+<p>{{nama}}</p>
+
+
+<button  class="btn btn-danger">Get Data</button>
+<h5>Add Data</h5>
+<form method="POST" class="wishlist-form">
+  {% csrf_token %}
+  {{form.as_table}}
+
+  <button type="submit" class="btn btn-primary">Create Item</button>
+</form>
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Nama Barang</th>
+        <th scope="col">Harga Barang</th>
+        <th scope="col">Deskripsi</th>
+      </tr>
+    </thead>
+    <tbody id="wishlist">
+    {% comment %} Tambahkan data di bawah baris ini {% endcomment %}
+
+    </tbody>
+  </table>
+<h5 id="last-login">Sesi terakhir: {{last_login}}</h5>
+
+{% endblock content %}
