@@ -5,8 +5,19 @@
 {% block content %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
+  function getFormData($form) {
+        var unindexed_array = $form.serializeArray();
+        var indexed_array = {};
+
+        $.map(unindexed_array, function (n, i) {
+            indexed_array[n['name']] = n['value'];
+        });
+
+        return indexed_array;
+    }
+
   $(document).ready(function(){
-    $("button").click(function(){
+    $("#get-button").click(function(){
       $.getJSON("{% url 'wishlist:show_json' %}", function(data) {
           var tables = [];
           $.each(data, function(index, val){
@@ -22,7 +33,43 @@
           document.getElementById("wishlist").innerHTML = tables.join("");
       }); 
     });
+    $("#tambah_barang_form").submit(function (e) {
+            e.preventDefault();
+            $("#create-button").prop('disabled', true);
+            $("#create-button").text('Processing...');
+            var $form = $(this);
+            var serializedData = getFormData($form);
+            console.log(serializedData)
+            $.ajax({
+                url: "{% url 'wishlist:add_wishlist' %}",
+                type: "POST",
+                data: serializedData,
+                dataType: 'text',
+                success: function (data) {
+                    $("#create-button").prop('disabled', false);
+                    $("#create-button").text('Submit');
+                    $.getJSON("{% url 'wishlist:show_json' %}", function (data) {
+                        // JSON result in `data` variable
+                        var tables = [];
+                        $.each(data, function (index, val) {
+                          var row = [];
+                          var nama_barang = String(val.fields.nama_barang);
+                          var harga_barang = val.fields.harga_barang;
+                          var deskripsi = val.fields.deskripsi;
+                          row.push("<td>" + nama_barang + "</td>");
+                          row.push("<td>" + harga_barang + "</td>");
+                          row.push("<td>" + deskripsi + "</td>");
+                          tables.push("<tr>" + row.join("") + "</tr>");
+                        });
+                        document.getElementById("wishlist").innerHTML = tables.join("");
+                    });
+
+                }
+            });
   });
+});
+
+
 </script>
 
 <nav class="navbar navbar-expand-lg bg-light">
@@ -50,13 +97,13 @@
 <p>{{nama}}</p>
 
 
-<button  class="btn btn-danger">Get Data</button>
+<button  class="btn btn-danger" id="get-button">Get Data</button>
 <h5>Add Data</h5>
 <form method="POST" class="wishlist-form">
   {% csrf_token %}
   {{form.as_table}}
 
-  <button type="submit" class="btn btn-primary">Create Item</button>
+  <button type="submit" class="btn btn-primary" id="create-button">Create Item</button>
 </form>
 <table class="table">
     <thead>

@@ -34,7 +34,8 @@ def show_wishlist_ajax(request):
     }
     return render(request, "wishlist_ajax.html", context)
 
-def add_wishlist(request, ):
+@login_required(login_url='/wishlist/login/')
+def add_wishlist(request):
     if request.method == "POST":
         BarangWishlist.objects.create(nama_barang=request.POST['nama_barang'], harga_barang=request.POST['harga_barang'], deskripsi=request.POST['deskripsi'])
         return JsonResponse({'error': False, 'msg':"Success"})
